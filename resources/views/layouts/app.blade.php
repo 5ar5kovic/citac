@@ -10,14 +10,24 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="node-waves/dist/waves.js" defer></script>
+    <script src="/assets/js/app.js" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('fontawesome-free/js/all.js') }}" defer></script>
+    <script src="js/jquery.dataTables.min.js" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
+    <link href="node-waves/dist/waves.css">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+    <link href="fontawesome-free/css/all.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/dataTables.bootstrap4.min.css">
 </head>
 <body>
     <div id="app">

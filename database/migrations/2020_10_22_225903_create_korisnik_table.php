@@ -20,7 +20,8 @@ class CreateKorisnikTable extends Migration
             $table->string('jmbg', 13)->nullable(true);
             $table->string('sifra_objekta', 100);
             $table->string('broj_vodomera', 100)->nullable(true);
-            $table->integer('broj_clanova_domacinstva');            
+            $table->integer('broj_clanova_domacinstva')->default(1);
+            $table->boolean('pausalac')->default(false);
             $table->timestamps();
         });
     }
