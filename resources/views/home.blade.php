@@ -24,6 +24,11 @@
                     $('#modal_'+idKorisnik).modal('hide');
                     $('#stanjePrikaz_'+idKorisnik).empty();
                     $('#stanjePrikaz_'+idKorisnik).append(stanje);
+                    if (result == 1) {
+                        $('#redPrikaz_'+idKorisnik).css('background-color', '#99ff99');
+                    } else {
+                        $('#redPrikaz_'+idKorisnik).css('background-color', '#ffffff');
+                    }
                 },
                 error: function(result) {
                     console.log(result);
@@ -35,7 +40,7 @@
 <div class="container-fluid">
     <div class="col-md-8 offset-md-2">
         <div class="col-12 text-center">
-            <h5>{{ __('Датум: ' . date('m.Y.')) }} године</h5>
+            <h5>{{ __('Месец: ' . date('m.Y.')) }} године</h5>
         </div>
             @if (session('status'))
                 <div class="alert alert-success" role="alert">
@@ -46,24 +51,34 @@
                 <thead>
                     <tr>
                         <th class="text-center">#</th>
-                        <th>Име и презиме</th>
-                        <th>Шифра објекта</th>
-                        <th>Број водомера</th>
+                        <th>Име и презиме / бр. водомера</th>
+                        <th class="text-center bg-light">П. ст.</th>
                         <th class="text-center bg-light">Стање</th>
                         <th class="text-center">Измена</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($korisnici as $i=>$korisnik)
-                    <tr>
+                        @if ($korisnik['stanje'])
+                            <tr id="redPrikaz_{{ $korisnik['id'] }}" style="background-color: #99ff99">
+                        @else
+                            @if($korisnik['pausalac'])
+                                <tr id="redPrikaz_{{ $korisnik['id'] }}" style="background-color: #A9A9A9">
+                            @else
+                                <tr id="redPrikaz_{{ $korisnik['id'] }}">
+                            @endif
+                        @endif
                         <td scope="row" class="text-center">{{ $i + 1 }}</td>
-                            <td>{{ $korisnik['ime'] . ' ' . $korisnik['prezime'] }}</td>
-                            <td>{{ $korisnik['sifra_objekta'] }}</td>
-                            <td>{{ $korisnik['broj_vodomera'] }}</td>
-                            <td class="text-center bg-light" id="stanjePrikaz_{{ $korisnik['id'] }}">{{ $korisnik['stanje'] }}</td>
+                            <td>{{ $korisnik['ime'] . ' ' . $korisnik['prezime'] }} <span style="display:none">{{ $korisnik['latinica'] }}</span><br/><small>{{ $korisnik['broj_vodomera'] }}</small></td>
+                            <td class="text-center">{{ $korisnik['prethodno_stanje'] }}</td>
+                            @if($korisnik['pausalac'])
+                                <td class="text-center" id="stanjePrikaz_{{ $korisnik['id'] }}">{{ $korisnik['pausalac_kubika'] }}m3</td>
+                            @else
+                                <td class="text-center" id="stanjePrikaz_{{ $korisnik['id'] }}">{{ $korisnik['stanje'] }}</td>
+                            @endif
                             <td class="text-center">
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_{{ $korisnik['id'] }}">
+                                <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#modal_{{ $korisnik['id'] }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <!-- Modal -->
@@ -100,11 +115,6 @@
                     @endforeach
                 </tbody>
             </table>
-        <div class="text-right">
-            <button type="button" class="btn btn-sm btn-success">
-                <i class="fas fa-file-excel"></i> Извештај
-            </button>
-        </div>
     </div>
 </div>
 

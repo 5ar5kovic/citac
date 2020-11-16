@@ -13,4 +13,13 @@ class Korisnik extends Model
 
         return $korisnici;
     }
+
+    public static function korisnikPoImenuIPrezimenu($ime, $prezime) {
+        $korisnici = Korisnik::where('ime', 'like' , '%' . $ime . '%')
+            ->where('prezime', 'like', '%' . $prezime . '%')
+            ->get()
+            ->toArray();
+
+        return $korisnici;
+    }
 }
