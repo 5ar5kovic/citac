@@ -933,4 +933,4 @@ function ($) {
 Waves.init();
 
 // Feather Icons
-feather.replace()
+// feather.replace()

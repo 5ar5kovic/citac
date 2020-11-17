@@ -4,25 +4,33 @@
 
     <div class="container-fluid">
         <div class="col-md-8 offset-md-2">
-            <form method="POST">
-                @csrf
-                <div class="row">
-                    <div class="form-group">
-                        <label for="ime">Име</label>
-                        <input type="text" class="form-control" id="ime" name="ime" placeholder="Унесите име">
-                    </div>
-                    <div class="form-group">
-                        <label for="prezime">Презиме</label>
-                        <input type="text" class="form-control" id="prezime" name="prezime" placeholder="Унесите презиме">
-                    </div>
+            <div class="d-flex align-items-center p-3 my-3 text-white-50 rounded shadow-sm" style="background-color:#6f42c1">
+                <div class="lh-100">
+                    <h6 class="mb-0 text-white lh-100">Претрага корисника</h6>
                 </div>
-                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> Претрага</button>
-            </form>
-            <div class="content" style="margin-top:2em">
+            </div>
+            
+            <div class="my-3 p-3 bg-white rounded shadow-sm">
+                <form method="POST">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName">Име</label>
+                            <input type="text" class="form-control" id="ime" name="ime" placeholder="Унесите име" value="{{request('ime')}}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName">Презиме</label>
+                            <input type="text" class="form-control" id="prezime" name="prezime" placeholder="Унесите презиме" value="{{request('prezime')}}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="background-color:#6f42c1"><i class="fa fa-search"></i> Претрага</button>
+                </form>
+            </div>
+            <div class="my-3 p-3 bg-white rounded shadow-sm">
                 @foreach($korisnici as $korisnik)
-                    <div class="card bg-info">
+                    <div class="card bg-warning">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $korisnik['ime'] . " " . $korisnik['prezime']}}</h5>
+                            <h5 class="card-title"><a href="{{ route('korisnik', ['id'=>$korisnik['id']] ) }}">{{ $korisnik['ime'] . " " . $korisnik['prezime']}}</a></h5>
                             <p class="card-text">
                                 <strong>ЈМБГ: </strong>{{ $korisnik['jmbg'] }}
                                 <br/> 
@@ -31,9 +39,9 @@
                                 <strong>Број водомера: </strong>{{ $korisnik['broj_vodomera'] }}
                                 <br/>
                             </p>
-                            <a href="{{ route('korisnik', ['id'=>$korisnik['id']] ) }}" class="btn btn-primary">Отвори</a>
                         </div>
                     </div>
+                    <br>
                 @endforeach
             </div>
         </div>

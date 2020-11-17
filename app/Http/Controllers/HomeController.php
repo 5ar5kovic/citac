@@ -60,6 +60,7 @@ class HomeController extends Controller
         $godina = date('Y');
 
         $stanjeKorisnikaZaMesec = Stanje::getStanje($data['idKorisnik'], $mesec, $godina);
+        $korisnikModel = Korisnik::find($data['idKorisnik']);
         
         if (isset($stanjeKorisnikaZaMesec)) {   //izmena 
             $idStanja = Stanje::getIdStanja($data['idKorisnik'], $mesec, $godina);
@@ -76,6 +77,7 @@ class HomeController extends Controller
             $stanjeModel->godina = $godina;
             $stanjeModel->vreme_citanja = date('Y-m-d H:i:s');
             $stanjeModel->stanje = $data['stanje'];
+            $stanjeModel->broj_clanova_domacinstva = $korisnikModel->broj_clanova_domacinstva;
             $stanjeModel->save();
             return 1;
         }
@@ -101,8 +103,8 @@ class HomeController extends Controller
 
         $potrosnje = Stanje::getStanjaKorisnika($data['id']);
 
-        $blokTarifa = 7 * $korisnik['broj_clanova_domacinstva'];
         foreach($potrosnje as $i=>&$potrosnja) {
+            $blokTarifa = 7 * $potrosnja['broj_clanova_domacinstva'];
             if(isset($potrosnje[$i+1]['stanje'])) {
                 $potrosnja['potroseno'] = $potrosnja['stanje'] - $potrosnje[$i+1]['stanje'];
                 if ($potrosnja['potroseno'] > $blokTarifa) {
@@ -121,7 +123,10 @@ class HomeController extends Controller
     }
 
     public function izvestaj() {
-        return view('izvestaj');
+        $trenutniMesec = date('m');
+        $trenutnaGodina = date('Y');
+        
+        return view('izvestaj')->with(array('trenutniMesec'=>$trenutniMesec, 'trenutnaGodina'=>$trenutnaGodina));
     }
 
     public function napraviIzvestaj(Request $request) {
@@ -307,7 +312,7 @@ class HomeController extends Controller
             $idStanja = Stanje::getIdStanja($korisnik['id'], $data['mesec'], $data['godina']);
             if (isset($idStanja)) {
                 $stanjeModel = Stanje::find($idStanja);
-                $korisnik['datum_citanja'] = date('m/d/Y', strtotime($stanjeModel->created_at));
+                $korisnik['datum_citanja'] = date('d.m.Y.', strtotime($stanjeModel->vreme_citanja));
             } else {
                 $korisnik['datum_citanja'] = '';
             }
@@ -320,7 +325,7 @@ class HomeController extends Controller
             $idStanja = Stanje::getIdStanja($korisnik['id'], $prethodniMesec, $prethodnaGodina);
             if (isset($idStanja)) {
                 $stanjePretModel = Stanje::find($idStanja);
-                $korisnik['prethodni_datum_citanja'] = date('m/d/Y', strtotime($stanjePretModel->created_at));
+                $korisnik['prethodni_datum_citanja'] = date('d.m.Y.', strtotime($stanjePretModel->vreme_citanja));
             } else {
                 $korisnik['prethodni_datum_citanja'] = '';
             }
@@ -357,6 +362,8 @@ class HomeController extends Controller
 
         $spreadsheet->getActiveSheet()->getStyle('Y3:Y'.$lastCol)->applyFromArray($styleCenterCol);
         $spreadsheet->getActiveSheet()->getStyle('Z3:Z'.$lastCol)->applyFromArray($styleBorder);
+
+        $spreadsheet->getActiveSheet()->getStyle('A2:Z500')->getAlignment()->setWrapText(true); 
 
         foreach($korisnici as $i=>$korisnik) {
             $colBr = $i + 3;

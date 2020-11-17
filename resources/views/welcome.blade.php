@@ -64,7 +64,8 @@
             }
         </style>
     </head>
-    <body style="color:#fff;background: rgb(2,0,36);background: radial-gradient(circle, rgba(2,0,36,1) 60%, rgba(9,9,121,1) 100%, rgba(0,212,255,1) 100%);">
+    <body style="color:#fff;background-color:#343a40">
+        
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">

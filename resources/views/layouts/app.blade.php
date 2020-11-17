@@ -33,12 +33,12 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="background-color:#343a40 !important">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('/') }}" style="color:#ffffff">
                     МЗ Малча
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" style="background-color:#ffffff !important" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -53,22 +53,22 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">Пријава</a>
+                                <a class="nav-link" href="{{ route('login') }}" style="color:#ffffff">Пријава</a>
                             </li>
                         @else
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('pretraga') }}">Претрага</a>
+                                <a class="nav-link" href="{{ route('pretraga') }}" style="color:#ffffff">Претрага</a>
                             </li>
                             @if (Auth::id() == 1)
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('home') }}">Унос</a>
+                                    <a class="nav-link" href="{{ route('home') }}" style="color:#ffffff">Унос</a>
                                 </li>
                             @endif
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('izvestaj') }}">Извештај</a>
+                                <a class="nav-link" href="{{ route('izvestaj') }}" style="color:#ffffff">Извештај</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre style="color:#ffffff">
                                     {{ Auth::user()->name }}
                                 </a>
 
