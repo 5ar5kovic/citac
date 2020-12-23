@@ -97,7 +97,7 @@
                                                 <input type="hidden" id="korisnik_{{ $korisnik['id'] }}" name="korisnik_{{ $korisnik['id'] }}" value="{{ $korisnik['id'] }}" autofocus>
                                                 <div class="form-group text-center">
                                                     <label class="col-form-label col-form-label-lg" for="stanje">Стање:</label>
-                                                    <input id="stanje_{{ $korisnik['id'] }}" class="form-control form-control-lg text-center" maxlength="4" type="text" pattern="\d*">
+                                                    <input id="stanje_{{ $korisnik['id'] }}" class="form-control form-control-lg text-center" maxlength="4" type="tel" pattern="\d*">
                                                 </div>
                                                 <p><strong>ЈМБГ:</strong> {{ $korisnik['jmbg'] }}</p>
                                                 <p><strong>Шифра објекта:</strong> {{ $korisnik['sifra_objekta'] }}</p>
