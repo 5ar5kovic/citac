@@ -85,15 +85,24 @@ class HomeController extends Controller
 
     public function pretraga(Request $request) {
         $data = $request->input();
-
+        
         $cirilicaLatinicaHelper = new CirilicaLatinicaHelper();
 
-        $korisnici = [];
+        $rezultat = [];
         if ($request->isMethod('post')) {
             $korisnici = Korisnik::korisnikPoImenuIPrezimenu($cirilicaLatinicaHelper->stringToCyr($data['ime']), $cirilicaLatinicaHelper->stringToCyr($data['prezime']));
+            if (isset($data['pausalac']) && $data['pausalac']) {
+                foreach ($korisnici as $korisnik) {
+                    if ($korisnik['pausalac']) {
+                        $rezultat[] = $korisnik;
+                    }
+                }
+            } else {
+                $rezultat = $korisnici;
+            }
         }
 
-        return view('pretraga')->with(array('korisnici'=>$korisnici));
+        return view('pretraga')->with(array('korisnici'=>$rezultat));
     }
 
     public function korisnik(Request $request) {
@@ -102,21 +111,41 @@ class HomeController extends Controller
         $korisnik = Korisnik::find($data['id'])->toArray();
 
         $potrosnje = Stanje::getStanjaKorisnika($data['id']);
-
+        
         foreach($potrosnje as $i=>&$potrosnja) {
+
             $blokTarifa = 7 * $potrosnja['broj_clanova_domacinstva'];
-            if(isset($potrosnje[$i+1]['stanje'])) {
-                $potrosnja['potroseno'] = $potrosnja['stanje'] - $potrosnje[$i+1]['stanje'];
-                if ($potrosnja['potroseno'] > $blokTarifa) {
-                    $prekoraceno = $potrosnja['potroseno'] - $blokTarifa;
+            
+            if (!$potrosnja['pausalac']) {
+
+                if(isset($potrosnje[$i+1]['stanje'])) { //ako postoji prethodno stanje
+
+                    $potrosnja['potroseno'] = $potrosnja['stanje'] - $potrosnje[$i+1]['stanje'];
+                    
+                    if ($potrosnja['potroseno'] > $blokTarifa) {
+                        $prekoraceno = $potrosnja['potroseno'] - $blokTarifa;
+                        $potrosnja['racun'] = 200 * $prekoraceno + 50 * $blokTarifa;
+                    } else {
+                        $potrosnja['racun'] = 50 * $potrosnja['potroseno'];
+                    }
+
+                } else {
+                    $potrosnja['potroseno'] = '/';
+                    $potrosnja['racun'] = 0;
+                }
+
+            } else {    //pausalac
+
+                $potrosnja['potroseno'] = 0;
+                if ($potrosnja['pausalac_kubika'] > $blokTarifa) {
+                    $prekoraceno = $potrosnja['pausalac_kubika'] - $blokTarifa;
                     $potrosnja['racun'] = 200 * $prekoraceno + 50 * $blokTarifa;
                 } else {
-                    $potrosnja['racun'] = 50 * $potrosnja['potroseno'];
+                    $potrosnja['racun'] = 50 * $potrosnja['pausalac_kubika'];
                 }
-            } else {
-                $potrosnja['potroseno'] = '/';
-                $potrosnja['racun'] = 0;
+
             }
+
         }
 
         return view('korisnik')->with(array('korisnik'=>$korisnik, 'potrosnje'=>$potrosnje));

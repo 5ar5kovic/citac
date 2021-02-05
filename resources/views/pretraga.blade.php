@@ -23,6 +23,16 @@
                             <input type="text" class="form-control" id="prezime" name="prezime" placeholder="Унесите презиме" value="{{request('prezime')}}">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 offset-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" id="pausalac" name="pausalac">
+                                <label class="form-check-label" for="pausalac">
+                                    Паушалац
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <button type="submit" class="btn btn-primary" style="background-color:#6f42c1"><i class="fa fa-search"></i> Претрага</button>
                 </form>
             </div>

@@ -32,7 +32,7 @@
     <div class="container-fluid">
         <div class="col-md-8 offset-md-2">
 
-            <table class="table table-hover table-dark">
+            <table class="table table-hover table-dark text-center">
                 <thead>
                     <tr>
                         <th scope="col">Месец</th>
@@ -44,12 +44,19 @@
                 <tbody>
                     @foreach($potrosnje as $i=>$potrosnja)
                         <tr>
-                            <th scope="row">{{ $potrosnja['mesec'] . '.' . $potrosnja['godina'] }}</th>
+                            <th scope="row">
+                                {{ $potrosnja['mesec'] . '.' . $potrosnja['godina'] }}
+                            </th>
                             <td>{{ $potrosnja['stanje'] }}</td>
                             <td>
                                 {{ $potrosnja['potroseno'] }}
                             </td>
                             <td>
+                                @php
+                                    if ($potrosnja['pausalac']) {
+                                        echo '<span class="badge badge-danger">Паушалац</span>';
+                                    }
+                                @endphp
                                 {{ number_format($potrosnja['racun'], 2, ',' , '.') . " динара" }}
                             </td>
                         </tr>
