@@ -219,8 +219,13 @@ class HomeController extends Controller
         foreach ($rezultat as $rez) {
             $ukupno += $rez['racun'];
         }
+
+        $kubika = 0;
+        foreach ($rezultat as $rez) {
+            $kubika += $rez['potroseno'];
+        }
         
-        return view('ocekivani-prihod-rezultat')->with(array('rezultat'=>$rezultat, 'ukupno'=>$ukupno));
+        return view('ocekivani-prihod-rezultat')->with(array('rezultat'=>$rezultat, 'ukupno'=>$ukupno, 'kubika'=>$kubika));
     }
 
     public function izvestaj() {
