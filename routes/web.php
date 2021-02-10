@@ -27,3 +27,5 @@ Route::get('/izvestaj', 'HomeController@izvestaj')->name('izvestaj');
 Route::any('/napravi-izvestaj', 'HomeController@napraviIzvestaj')->name('napravi-izvestaj');
 Route::get('/izmena-podataka', 'HomeController@izmenaPodataka')->name('izmena-podataka');
 Route::post('/upis-podataka', 'HomeController@upisPodataka')->name('upis-podataka');
+Route::get('/ocekivani-prihod', 'HomeController@ocekivaniPrihod')->name('ocekivani-prihod');
+Route::any('/ocekivani-prihod-rezultat', 'HomeController@ocekivaniPrihodRezultat')->name('ocekivani-prihod-rezultat');

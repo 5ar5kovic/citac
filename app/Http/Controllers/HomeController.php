@@ -151,6 +151,78 @@ class HomeController extends Controller
         return view('korisnik')->with(array('korisnik'=>$korisnik, 'potrosnje'=>$potrosnje));
     }
 
+    
+    public function ocekivaniPrihod() {
+        $trenutniMesec = date('m');
+        $trenutnaGodina = date('Y');
+        
+        return view('ocekivani-prihod')->with(array('trenutniMesec'=>$trenutniMesec, 'trenutnaGodina'=>$trenutnaGodina));
+    }
+
+    
+    public function ocekivaniPrihodRezultat(Request $request) {
+        $data = $request->input();
+        
+        $korisnici = Korisnik::sviKorisnici();
+
+        $rezultat = [];
+        $br = 0;
+
+        foreach ($korisnici as $korisnik) {
+            $potrosnje = Stanje::getStanjaKorisnika($korisnik['id']);
+            
+            foreach($potrosnje as $i=>&$potrosnja) {
+
+                if ($potrosnja['mesec'] == $data['mesec'] && $potrosnja['godina'] == $data['godina']) {  //za izabrani mesec
+
+                    $blokTarifa = 7 * $potrosnja['broj_clanova_domacinstva'];
+                    
+                    if (!$potrosnja['pausalac']) {
+
+                        if(isset($potrosnje[$i+1]['stanje'])) { //ako postoji prethodno stanje
+
+                            $rezultat[$br]['potroseno'] = $potrosnja['stanje'] - $potrosnje[$i+1]['stanje'];
+                            
+                            if ($rezultat[$br]['potroseno'] > $blokTarifa) {
+                                $prekoraceno = $rezultat[$br]['potroseno'] - $blokTarifa;
+                                $rezultat[$br]['racun'] = 200 * $prekoraceno + 50 * $blokTarifa;
+                            } else {
+                                $rezultat[$br]['racun'] = 50 * $rezultat[$br]['potroseno'];
+                            }
+
+                        } else {
+                            $rezultat[$br]['potroseno'] = '/';
+                            $rezultat[$br]['racun'] = 0;
+                        }
+
+                    } else {    //pausalac
+
+                        $rezultat[$br]['potroseno'] = 0;
+                        if ($potrosnja['pausalac_kubika'] > $blokTarifa) {
+                            $prekoraceno = $potrosnja['pausalac_kubika'] - $blokTarifa;
+                            $rezultat[$br]['racun'] = 200 * $prekoraceno + 50 * $blokTarifa;
+                        } else {
+                            $rezultat[$br]['racun'] = 50 * $potrosnja['pausalac_kubika'];
+                        }
+
+                    }
+                    $rezultat[$br]['korisnik_id'] = $korisnik['id'];
+                    $rezultat[$br]['ime'] = $korisnik['ime'] . ' ' . $korisnik['prezime'];
+                }
+            }
+            $br++;
+        }
+
+        array_multisort( array_column($rezultat, "racun"), SORT_DESC, $rezultat );
+       
+        $ukupno = 0;
+        foreach ($rezultat as $rez) {
+            $ukupno += $rez['racun'];
+        }
+        
+        return view('ocekivani-prihod-rezultat')->with(array('rezultat'=>$rezultat, 'ukupno'=>$ukupno));
+    }
+
     public function izvestaj() {
         $trenutniMesec = date('m');
         $trenutnaGodina = date('Y');

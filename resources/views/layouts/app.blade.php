@@ -65,6 +65,9 @@
                                 </li>
                             @endif
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('ocekivani-prihod') }}" style="color:#ffffff">Очекивани приход</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('izvestaj') }}" style="color:#ffffff">Извештај</a>
                             </li>
                             <li class="nav-item dropdown">
