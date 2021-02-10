@@ -208,6 +208,7 @@ class HomeController extends Controller
                     }
                     $rezultat[$br]['korisnik_id'] = $korisnik['id'];
                     $rezultat[$br]['ime'] = $korisnik['ime'] . ' ' . $korisnik['prezime'];
+                    $rezultat[$br]['broj_clanova_domacinstva'] = $korisnik['broj_clanova_domacinstva'];
                 }
             }
             $br++;

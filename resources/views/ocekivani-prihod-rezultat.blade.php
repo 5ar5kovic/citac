@@ -16,6 +16,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Име и презиме / Назив</th>
                         <th scope="col">Потрошио</th>
+                        <th scope="col">Бр. чланова</th>
                         <th scope="col">Рачун</th>
                     </tr>
                 </thead>
@@ -26,6 +27,7 @@
                             <th scope="row">{{ $br++ }}</th>
                             <td>{{ $rez['ime'] }}</td>
                             <td>{{ $rez['potroseno'] }}</td>
+                            <td>{{ $rez['broj_clanova_domacinstva'] }}</td>
                             <td>{{ number_format($rez['racun'], 2, ',', '.') }}</td>
                         </tr>
                     @endforeach
