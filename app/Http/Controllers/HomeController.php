@@ -214,7 +214,7 @@ class HomeController extends Controller
             $br++;
         }
 
-        array_multisort( array_column($rezultat, "racun"), SORT_DESC, $rezultat );
+        array_multisort( array_column($rezultat, "racun"), SORT_DESC, array_column($rezultat, "broj_clanova_domacinstva"), SORT_DESC, $rezultat );
        
         $ukupno = 0;
         foreach ($rezultat as $rez) {
@@ -226,7 +226,7 @@ class HomeController extends Controller
             $kubika += $rez['potroseno'];
         }
         
-        return view('ocekivani-prihod-rezultat')->with(array('rezultat'=>$rezultat, 'ukupno'=>$ukupno, 'kubika'=>$kubika));
+        return view('ocekivani-prihod-rezultat')->with(array('rezultat'=>$rezultat, 'ukupno'=>$ukupno, 'kubika'=>$kubika, 'mesec'=>$data['mesec'], 'godina'=>$data['godina']));
     }
 
     public function izvestaj() {
@@ -413,6 +413,7 @@ class HomeController extends Controller
         $spreadsheet->getActiveSheet()->getStyle('Y2:Y2000')->getNumberFormat()->setFormatCode('0');
 
         $korisnici = Korisnik::sviKorisnici();
+        
         foreach ($korisnici as &$korisnik) {
             //novo stanje
             $korisnik['stanje'] = Stanje::getStanje($korisnik['id'], $data['mesec'], $data['godina']);
@@ -441,6 +442,7 @@ class HomeController extends Controller
         
         $brKorisnika = count($korisnici);
         $lastCol = $brKorisnika + 2;
+        
         $spreadsheet->getActiveSheet()->getStyle('A3:A'.$lastCol)->applyFromArray($styleFirstCol);
         $spreadsheet->getActiveSheet()->getStyle('B3:B'.$lastCol)->applyFromArray($styleBorder);
         $spreadsheet->getActiveSheet()->getStyle('C3:C'.$lastCol)->applyFromArray($styleBorder);
@@ -471,29 +473,31 @@ class HomeController extends Controller
         $spreadsheet->getActiveSheet()->getStyle('Z3:Z'.$lastCol)->applyFromArray($styleBorder);
 
         $spreadsheet->getActiveSheet()->getStyle('A2:Z500')->getAlignment()->setWrapText(true); 
-
-        foreach($korisnici as $i=>$korisnik) {
-            $colBr = $i + 3;
-            $sheet->setCellValue('A'.$colBr, $i+1);
-            $sheet->setCellValue('B'.$colBr, $korisnik['ime']);
-            $sheet->setCellValue('C'.$colBr, $korisnik['prezime']);
-            $sheet->setCellValue('D'.$colBr, $korisnik['sifra_objekta']);
-            $sheet->setCellValue('E'.$colBr, $korisnik['broj_clanova_domacinstva']);
-            $sheet->setCellValue('F'.$colBr, $korisnik['broj_vodomera']);
-            $sheet->setCellValue('G'.$colBr, $korisnik['prethodni_datum_citanja']);
-            $sheet->setCellValue('H'.$colBr, $korisnik['datum_citanja']);
-            $sheet->setCellValue('I'.$colBr, $korisnik['prethodno_stanje']);
-            $sheet->setCellValue('J'.$colBr, $korisnik['stanje']);
+        
+        foreach($korisnici as $j=>$kor) {
+            $colBr = $j + 3;
+            $sheet->setCellValue('A'.$colBr, $kor['redni_broj']);
+            $sheet->setCellValue('B'.$colBr, $kor['ime']);
+            $sheet->setCellValue('C'.$colBr, $kor['prezime']);
+            $sheet->setCellValue('D'.$colBr, $kor['sifra_objekta']);
+            $sheet->setCellValue('E'.$colBr, $kor['broj_clanova_domacinstva']);
+            $sheet->setCellValue('F'.$colBr, $kor['broj_vodomera']);
+            $sheet->setCellValue('G'.$colBr, $kor['prethodni_datum_citanja']);
+            $sheet->setCellValue('H'.$colBr, $kor['datum_citanja']);
+            $sheet->setCellValue('I'.$colBr, $kor['prethodno_stanje']);
+            $sheet->setCellValue('J'.$colBr, $kor['stanje']);
+            
             $utroseno = 0;
-            if ($korisnik['pausalac']) {
-                $sheet->setCellValue('K'.$colBr, $korisnik['pausalac_kubika']);
+            if ($kor['pausalac']) {
+                $utroseno = $kor['pausalac_kubika'];
             } else {
-                if (isset($korisnik['stanje']) && isset($korisnik['prethodno_stanje'])) {
-                    $utroseno = $korisnik['stanje'] - $korisnik['prethodno_stanje'];
-                    $sheet->setCellValue('K'.$colBr, $utroseno);
+                if (isset($kor['stanje']) && isset($kor['prethodno_stanje'])) {
+                    $utroseno = $kor['stanje'] - $kor['prethodno_stanje'];
                 }
             }
-            $sheet->setCellValue('Y'.$colBr, $korisnik['jmbg']);
+            $sheet->setCellValue('K'.$colBr, $utroseno);
+
+            $sheet->setCellValue('Y'.$colBr, $kor['jmbg']);
         }
 
         $writer = new Xlsx($spreadsheet);
