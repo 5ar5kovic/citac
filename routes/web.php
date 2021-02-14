@@ -21,6 +21,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home/unesi-stanje', 'HomeController@unesiStanje')->name('unesi-stanje');
+Route::post('/home/unesi-stanje-bazdaren', 'HomeController@unesiStanjeBazdaren')->name('unesi-stanje-bazdaren');
 Route::any('/pretraga', 'HomeController@pretraga')->name('pretraga');
 Route::get('/korisnik', 'HomeController@korisnik')->name('korisnik');
 Route::get('/izvestaj', 'HomeController@izvestaj')->name('izvestaj');

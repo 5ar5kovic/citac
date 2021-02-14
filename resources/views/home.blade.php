@@ -11,14 +11,16 @@
 
         function unesiStanje(idKorisnik) {
             var stanje = $('#stanje_' + idKorisnik).val();
-
+            var prethodnoStanje = $('#prethodno_stanje_' + idKorisnik).val();
+            
             $.ajax({
                 type: "POST",
                 url: '{{ route('unesi-stanje') }}',
                 data: {
                     "_token": "{{ csrf_token() }}",
                     idKorisnik: idKorisnik,
-                    stanje: stanje
+                    stanje: stanje,
+                    prethodnoStanje: prethodnoStanje,
                 },
                 success: function(result) {
                     $('#modal_'+idKorisnik).modal('hide');
@@ -28,6 +30,33 @@
                         $('#redPrikaz_'+idKorisnik).css('background-color', '#99ff99');
                     } else {
                         $('#redPrikaz_'+idKorisnik).css('background-color', '#ffffff');
+                    }
+                    if (parseInt(stanje,10) < parseInt(prethodnoStanje,10)) {
+                        $('#modalPrethodno_'+idKorisnik).modal('show');
+                    }
+                },
+                error: function(result) {
+                    console.log(result);
+                }
+            });
+        }
+        function unesiStanjeBazdaren(idKorisnik) {
+            var stanje = $('#bazdaren_stanje_' + idKorisnik).val();
+
+            $.ajax({
+                type: "POST",
+                url: '{{ route('unesi-stanje-bazdaren') }}',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    idKorisnik: idKorisnik,
+                    stanje: stanje,
+                },
+                success: function(result) {
+                    $('#modalPrethodno_'+idKorisnik).modal('hide');
+                    $('#prethodnoStanjePrikaz_'+idKorisnik).empty();
+                    $('#prethodnoStanjePrikaz_'+idKorisnik).append(stanje);
+                    if (result == 1) {
+                        $('#redPrikaz_'+idKorisnik).css('background-color', '#99ff99');
                     }
                 },
                 error: function(result) {
@@ -70,7 +99,7 @@
                         @endif
                         <td scope="row" class="text-center">{{ $i + 1 }}</td>
                             <td>{{ $korisnik['ime'] . ' ' . $korisnik['prezime'] }} <span style="display:none">{{ $korisnik['latinica'] }}</span><br/><small>{{ $korisnik['broj_vodomera'] }}</small></td>
-                            <td class="text-center">{{ $korisnik['prethodno_stanje'] }}</td>
+                            <td class="text-center" id="prethodnoStanjePrikaz_{{ $korisnik['id'] }}">{{ $korisnik['prethodno_stanje'] }}</td>
                             @if($korisnik['pausalac'])
                                 <td class="text-center" id="stanjePrikaz_{{ $korisnik['id'] }}">{{ $korisnik['pausalac_kubika'] }}m3</td>
                             @else
@@ -95,6 +124,7 @@
                                             </div> <!-- end of .modal-header -->
                                             <div class="modal-body text-left">
                                                 <input type="hidden" id="korisnik_{{ $korisnik['id'] }}" name="korisnik_{{ $korisnik['id'] }}" value="{{ $korisnik['id'] }}" autofocus>
+                                                <input type="hidden" id="prethodno_stanje_{{ $korisnik['id'] }}" name="prethodno_stanje_{{ $korisnik['id'] }}" value="{{ $korisnik['prethodno_stanje'] }}" autofocus>
                                                 <div class="form-group text-center">
                                                     <label class="col-form-label col-form-label-lg" for="stanje">Стање:</label>
                                                     <input id="stanje_{{ $korisnik['id'] }}" class="form-control form-control-lg text-center" maxlength="4" type="tel" pattern="\d*">
@@ -106,6 +136,36 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Одустани</button>
                                                 <button type="button" class="btn btn-primary" onclick="unesiStanje({{ $korisnik['id'] }})">Сачувај</button>
+                                            </div> <!-- end of .modal-footer -->
+                                        </div> <!-- end of .modal-content -->
+                                    </div> <!-- end of .modal-dialog -->
+                                </div> <!-- end of .modal -->
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modalPrethodno_{{ $korisnik['id'] }}" tabindex="-1" role="dialog" aria-labelledby="modalPrethodno" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger">
+                                                <h5 class="modal-title" id="modalPrethodno">
+                                                    Баждарен водомер!
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div> <!-- end of .modal-header -->
+                                            <div class="modal-body text-left">
+                                                <input type="hidden" id="bazdaren_korisnik_{{ $korisnik['id'] }}" name="korisnik_{{ $korisnik['id'] }}" value="{{ $korisnik['id'] }}" autofocus>
+                                                <h6 class="text-center">
+                                                    {{ $korisnik['ime'] . " " . $korisnik['prezime'] }}
+                                                </h6>
+                                                <div class="form-group text-center">
+                                                    <label class="col-form-label col-form-label-lg" for="stanje">Претходно стање:</label>
+                                                    <input id="bazdaren_stanje_{{ $korisnik['id'] }}" class="form-control form-control-lg text-center" maxlength="4" type="tel" pattern="\d*">
+                                                </div>
+                                            </div> <!-- end of .modal-body -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Одустани</button>
+                                                <button type="button" class="btn btn-primary" onclick="unesiStanjeBazdaren({{ $korisnik['id'] }})">Сачувај</button>
                                             </div> <!-- end of .modal-footer -->
                                         </div> <!-- end of .modal-content -->
                                     </div> <!-- end of .modal-dialog -->

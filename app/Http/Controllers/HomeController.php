@@ -42,10 +42,19 @@ class HomeController extends Controller
         $godina = date('Y');
         foreach ($korisnici as &$korisnik) {
             $korisnik['stanje'] = Stanje::getStanje($korisnik['id'], $mesec, $godina);
-            $prethodniMesec = $mesec;
-            $prethodnaGodina = $godina;
-            $this->getPrethodniMesec($prethodniMesec, $prethodnaGodina);
-            $korisnik['prethodno_stanje'] = Stanje::getStanje($korisnik['id'], $prethodniMesec, $prethodnaGodina);
+            
+            $idStanja = Stanje::getIdStanja($korisnik['id'], $mesec, $godina);
+            $stanjeModel = Stanje::find($idStanja);
+            
+            //bazdaren vodomer
+            if (isset($stanjeModel->prethodno_stanje_bazdaren_vodomer) && $stanjeModel->prethodno_stanje_bazdaren_vodomer >= 0) {
+                $korisnik['prethodno_stanje'] = $stanjeModel->prethodno_stanje_bazdaren_vodomer;
+            } else { 
+                $prethodniMesec = $mesec;
+                $prethodnaGodina = $godina;
+                $this->getPrethodniMesec($prethodniMesec, $prethodnaGodina);
+                $korisnik['prethodno_stanje'] = Stanje::getStanje($korisnik['id'], $prethodniMesec, $prethodnaGodina);
+            }
 
             $korisnik['latinica'] = $cirilicaLatinicaHelper->stringToLat($korisnik['ime']) . ' ' . $cirilicaLatinicaHelper->stringToLat($korisnik['prezime']);
         }
@@ -79,8 +88,34 @@ class HomeController extends Controller
             $stanjeModel->stanje = $data['stanje'];
             $stanjeModel->broj_clanova_domacinstva = $korisnikModel->broj_clanova_domacinstva;
             $stanjeModel->save();
+
             return 1;
         }
+    }
+
+    public function unesiStanjeBazdaren(Request $request)
+    {
+        $data = $request->input();
+        $mesec = date('m');
+        $godina = date('Y');
+        
+        $stanjeKorisnikaZaMesec = Stanje::getStanje($data['idKorisnik'], $mesec, $godina);
+        $korisnikModel = Korisnik::find($data['idKorisnik']);
+        
+        if (isset($stanjeKorisnikaZaMesec)) {   //izmena 
+            $idStanja = Stanje::getIdStanja($data['idKorisnik'], $mesec, $godina);
+            $stanjeModel = Stanje::find($idStanja);
+        } else {    //novo stanje
+            $stanjeModel = new Stanje();
+        }
+        
+        if (is_null($data['stanje'])) { //ako je prazno, obrisi
+            $stanjeModel->prethodno_stanje_bazdaren_vodomer = 0;
+        } else {
+            $stanjeModel->prethodno_stanje_bazdaren_vodomer = $data['stanje'];
+            $stanjeModel->save();
+        }
+        return 1;
     }
 
     public function pretraga(Request $request) {
@@ -242,53 +277,53 @@ class HomeController extends Controller
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(5);
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(8.6255);
         $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(14.57);
+        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(19.753);
         $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20.225);
         $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(11.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(16.307);
         $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(6);
+        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(8.307);
         $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(12.14);
+        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15.835);
         $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10.71);
+        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(18.5);
         $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(16.143);
         $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(7.29);
+        $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(10.502);
         $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(14.14);
+        $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(13.169);
         $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(12.71);
+        $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(9.876);
         $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(2.29);
+        $spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(18.338);
         $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('M')->setWidth(1.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('M')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('N')->setWidth(1.29);
+        $spreadsheet->getActiveSheet()->getColumnDimension('N')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('O')->setWidth(1.71);
+        $spreadsheet->getActiveSheet()->getColumnDimension('O')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('P')->setWidth(1.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('P')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setWidth(1.71);
+        $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('R')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('R')->setWidth(1.57);
+        $spreadsheet->getActiveSheet()->getColumnDimension('R')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('S')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('S')->setWidth(2);
+        $spreadsheet->getActiveSheet()->getColumnDimension('S')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('T')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('T')->setWidth(1.86);
+        $spreadsheet->getActiveSheet()->getColumnDimension('T')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('U')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('U')->setWidth(2);
+        $spreadsheet->getActiveSheet()->getColumnDimension('U')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('V')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('V')->setWidth(1.71);
+        $spreadsheet->getActiveSheet()->getColumnDimension('V')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('W')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('W')->setWidth(2);
+        $spreadsheet->getActiveSheet()->getColumnDimension('W')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('X')->setAutoSize(false);
-        $spreadsheet->getActiveSheet()->getColumnDimension('X')->setWidth(2.29);
+        $spreadsheet->getActiveSheet()->getColumnDimension('X')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('Y')->setAutoSize(false);
         $spreadsheet->getActiveSheet()->getColumnDimension('Y')->setWidth(18.86);
         $spreadsheet->getActiveSheet()->getColumnDimension('Z')->setAutoSize(false);
@@ -341,6 +376,24 @@ class HomeController extends Controller
                 'rotation' => 90,
                 'color' => [
                     'argb' => 'FDE9D9',
+                ],
+            ],
+        ];
+        $styleYellowCols= [
+            'alignment' => [
+                'horizontal' => 'center',
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '00000000'],
+                ],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'rotation' => 90,
+                'color' => [
+                    'argb' => 'FFFF00',
                 ],
             ],
         ];
@@ -417,28 +470,38 @@ class HomeController extends Controller
         foreach ($korisnici as &$korisnik) {
             //novo stanje
             $korisnik['stanje'] = Stanje::getStanje($korisnik['id'], $data['mesec'], $data['godina']);
-            $idStanja = Stanje::getIdStanja($korisnik['id'], $data['mesec'], $data['godina']);
-            if (isset($idStanja)) {
-                $stanjeModel = Stanje::find($idStanja);
-                $korisnik['datum_citanja'] = date('d.m.Y.', strtotime($stanjeModel->vreme_citanja));
-            } else {
-                $korisnik['datum_citanja'] = '';
-            }
-
+            
             //prethodno stanje
             $prethodniMesec = $data['mesec'];
             $prethodnaGodina = $data['godina'];
             $this->getPrethodniMesec($prethodniMesec, $prethodnaGodina);
             $korisnik['prethodno_stanje'] = Stanje::getStanje($korisnik['id'], $prethodniMesec, $prethodnaGodina);
+            $korisnik['bazdarenje_napomena'] = "";
+
+            $idStanja = Stanje::getIdStanja($korisnik['id'], $data['mesec'], $data['godina']);
+            if (isset($idStanja)) {
+                $stanjeModel = Stanje::find($idStanja);
+
+                //prethodno stanje ukoliko je bazdaren vodomer
+                if (isset($stanjeModel->prethodno_stanje_bazdaren_vodomer) && $stanjeModel->prethodno_stanje_bazdaren_vodomer >= 0) {
+                    $korisnik['prethodno_stanje'] = $stanjeModel->prethodno_stanje_bazdaren_vodomer;
+                    $korisnik['bazdarenje_napomena'] = "баждарен водомер";
+                }
+
+                $korisnik['datum_citanja'] = date('d.m.Y.', strtotime($stanjeModel->vreme_citanja));
+            } else {
+                $korisnik['datum_citanja'] = '';
+            }
+
             $idStanja = Stanje::getIdStanja($korisnik['id'], $prethodniMesec, $prethodnaGodina);
             if (isset($idStanja)) {
                 $stanjePretModel = Stanje::find($idStanja);
                 $korisnik['prethodni_datum_citanja'] = date('d.m.Y.', strtotime($stanjePretModel->vreme_citanja));
+                $korisnik['prethodni_broj_clanova_domacinstva'] = $stanjePretModel->broj_clanova_domacinstva;
             } else {
-                $korisnik['prethodni_datum_citanja'] = '';
+                $korisnik['prethodni_datum_citanja'] = $korisnik['prethodni_broj_clanova_domacinstva'] = '';
             }
         }
-
         
         $brKorisnika = count($korisnici);
         $lastCol = $brKorisnika + 2;
@@ -476,16 +539,46 @@ class HomeController extends Controller
         
         foreach($korisnici as $j=>$kor) {
             $colBr = $j + 3;
+            $napomena = [];
+            
+            if ($kor['bazdarenje_napomena'] != '') {
+                $napomena[] = $kor['bazdarenje_napomena'];
+            }
             $sheet->setCellValue('A'.$colBr, $kor['redni_broj']);
             $sheet->setCellValue('B'.$colBr, $kor['ime']);
             $sheet->setCellValue('C'.$colBr, $kor['prezime']);
             $sheet->setCellValue('D'.$colBr, $kor['sifra_objekta']);
             $sheet->setCellValue('E'.$colBr, $kor['broj_clanova_domacinstva']);
+            if ($kor['prethodni_broj_clanova_domacinstva'] != "" && $kor['prethodni_broj_clanova_domacinstva'] != $kor['broj_clanova_domacinstva']) {
+                $sheet->getStyle('E'.$colBr)->applyFromArray($styleYellowCols);
+                $napomena[] = 'измењен број чланова домаћинства';
+            }
             $sheet->setCellValue('F'.$colBr, $kor['broj_vodomera']);
             $sheet->setCellValue('G'.$colBr, $kor['prethodni_datum_citanja']);
             $sheet->setCellValue('H'.$colBr, $kor['datum_citanja']);
             $sheet->setCellValue('I'.$colBr, $kor['prethodno_stanje']);
             $sheet->setCellValue('J'.$colBr, $kor['stanje']);
+            if ($kor['broj_clanova_domacinstva'] > 0) {
+                $sheet->setCellValue('L'.$colBr, "=K".$colBr."/E".$colBr);
+            } else {
+                $sheet->setCellValue('L'.$colBr, "0");
+            }
+            $sheet->setCellValue('M'.$colBr, "=IF(L".$colBr."<=7,K".$colBr.",E".$colBr."*7)");
+            $sheet->setCellValue('N'.$colBr, "=K".$colBr."-M".$colBr);
+            if ($kor['broj_clanova_domacinstva'] > 0) {
+                $sheet->setCellValue('O'.$colBr, "50.00");
+                $sheet->setCellValue('P'.$colBr, "200.00");
+                $sheet->setCellValue('Q'.$colBr, "=M".$colBr."*O".$colBr);
+                $sheet->setCellValue('R'.$colBr, "=N".$colBr."*P".$colBr);
+                $sheet->setCellValue('S'.$colBr, "=Q".$colBr."+R".$colBr);
+            } else {
+                $sheet->setCellValue('S'.$colBr, "=K".$colBr."*200");
+            }
+            $sheet->setCellValue('T'.$colBr, "60.00");
+            $sheet->setCellValue('U'.$colBr, "=S".$colBr."+T".$colBr);
+            $sheet->setCellValue('V'.$colBr, 0);
+            $sheet->setCellValue('W'.$colBr, 0);
+            $sheet->setCellValue('Z'.$colBr, implode(',', $napomena));
             
             $utroseno = 0;
             if ($kor['pausalac']) {
