@@ -423,6 +423,9 @@ class HomeController extends Controller
             ],
         ];
         $styleBorder= [
+            'alignment' => [
+                'horizontal' => 'left',
+            ],
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -528,9 +531,9 @@ class HomeController extends Controller
         $spreadsheet->getActiveSheet()->getStyle('S3:S'.$lastCol)->applyFromArray($styleBorder);
         $spreadsheet->getActiveSheet()->getStyle('T3:T'.$lastCol)->applyFromArray($styleBorder);
         $spreadsheet->getActiveSheet()->getStyle('U3:U'.$lastCol)->applyFromArray($styleBorder);
-        $spreadsheet->getActiveSheet()->getStyle('V3:V'.$lastCol)->applyFromArray($styleBorder);
-        $spreadsheet->getActiveSheet()->getStyle('W3:W'.$lastCol)->applyFromArray($styleBorder);
-        $spreadsheet->getActiveSheet()->getStyle('X3:X'.$lastCol)->applyFromArray($styleBorder);
+        $spreadsheet->getActiveSheet()->getStyle('V3:V'.$lastCol)->applyFromArray($styleCenterCol);
+        $spreadsheet->getActiveSheet()->getStyle('W3:W'.$lastCol)->applyFromArray($styleCenterCol);
+        $spreadsheet->getActiveSheet()->getStyle('X3:X'.$lastCol)->applyFromArray($styleCenterCol);
 
         $spreadsheet->getActiveSheet()->getStyle('Y3:Y'.$lastCol)->applyFromArray($styleCenterCol);
         $spreadsheet->getActiveSheet()->getStyle('Z3:Z'.$lastCol)->applyFromArray($styleBorder);
@@ -576,8 +579,9 @@ class HomeController extends Controller
             }
             $sheet->setCellValue('T'.$colBr, "60.00");
             $sheet->setCellValue('U'.$colBr, "=S".$colBr."+T".$colBr);
-            $sheet->setCellValue('V'.$colBr, 0);
-            $sheet->setCellValue('W'.$colBr, 0);
+            $sheet->setCellValue('V'.$colBr, $kor['indikator_1']);
+            $sheet->setCellValue('W'.$colBr, $kor['indikator_2']);
+            $sheet->setCellValue('X'.$colBr, $kor['tip_vodomera']);
             $sheet->setCellValue('Z'.$colBr, implode(',', $napomena));
             
             $utroseno = 0;
