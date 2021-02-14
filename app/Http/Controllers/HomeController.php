@@ -77,6 +77,7 @@ class HomeController extends Controller
         } else {    //novo stanje
             $stanjeModel = new Stanje();
         }
+        
         if (is_null($data['stanje'])) { //ako je prazno, obrisi
             $stanjeModel->delete();
             return 2;
@@ -113,8 +114,8 @@ class HomeController extends Controller
             $stanjeModel->prethodno_stanje_bazdaren_vodomer = 0;
         } else {
             $stanjeModel->prethodno_stanje_bazdaren_vodomer = $data['stanje'];
-            $stanjeModel->save();
         }
+        $stanjeModel->save();
         return 1;
     }
 

@@ -31,6 +31,10 @@
                     } else {
                         $('#redPrikaz_'+idKorisnik).css('background-color', '#ffffff');
                     }
+                    if (result == 2) {
+                        $('#prethodnoStanjePrikaz_'+idKorisnik).empty();
+                        $('#prethodnoStanjePrikaz_'+idKorisnik).append(prethodnoStanje);
+                    }
                     if (parseInt(stanje,10) < parseInt(prethodnoStanje,10)) {
                         $('#modalPrethodno_'+idKorisnik).modal('show');
                     }
